@@ -68,18 +68,18 @@ public:
     
     ofPoint srcPoints[4];
     ofPoint dstPoints[4];
-    
-protected:
 
     void onMouseMoved(ofMouseEventArgs & mouseArgs);
     void onMousePressed(ofMouseEventArgs & mouseArgs);
     void onMouseDragged(ofMouseEventArgs & mouseArgs);
     void onMouseReleased(ofMouseEventArgs & mouseArgs);
     void keyPressed(ofKeyEventArgs & keyArgs);
+
+protected:
     
     ofPoint position;
     
-	float anchorSize;
+    float anchorSize;
     float anchorSizeHalf;
     int selectedCornerIndex;
     int highlightCornerIndex;
