@@ -4,7 +4,7 @@
 //
 
 #include "ofxQuadWarp.h"
-#include "ofxOpenCv.h"
+#include "matrix_funcs.h"
 
 ofxQuadWarp::ofxQuadWarp() {
     anchorSize = 10;
@@ -128,90 +128,50 @@ ofMatrix4x4 ofxQuadWarp::getMatrixInverse() const {
 }
 
 ofMatrix4x4 ofxQuadWarp::getMatrix(const ofPoint* srcPoints, const ofPoint* dstPoints) const {
+    ofMatrix4x4 matrixTemp;
     
-    //we need our points as opencv points
-    //be nice to do this without opencv?
-    CvPoint2D32f cvsrc[4];
-    CvPoint2D32f cvdst[4];  
-    
-    //we set the warp coordinates
-    //source coordinates as the dimensions of our window
-    for(int i=0; i<4; ++i) {
-        cvsrc[i].x = srcPoints[i].x;
-        cvsrc[i].y = srcPoints[i].y;
-        
-        cvdst[i].x = dstPoints[i].x;
-        cvdst[i].y = dstPoints[i].y;
+    // we set it to the default - 0 translation
+    // and 1.0 scale for x y z and w
+    for(int i = 0; i < 16; i++) {
+        if(i % 5 != 0) {
+            matrixTemp.getPtr()[i] = 0.0;
+        }
+        else {
+            matrixTemp.getPtr()[i] = 1.0;
+        }
     }
     
-    //we create a matrix that will store the results
-    //from openCV - this is a 3x3 2D matrix that is
-    //row ordered
-    CvMat * translate = cvCreateMat(3,3,CV_32FC1);
+    // source and destination points
+    double src[4][2];
+    double dest[4][2];
+
+    for(int i=0; i<4; ++i) {
+        src[i][0] = srcPoints[i].x;
+        src[i][1] = srcPoints[i].y;
         
-    //this is the slightly easier - but supposidly less
-    //accurate warping method 
-    //cvWarpPerspectiveQMatrix(cvsrc, cvdst, translate); 
+        dest[i][0] = dstPoints[i].x;
+        dest[i][1] = dstPoints[i].y;
+    }
+
+    double warpMatrix[3][3];  //< interim projection warping matrix
     
+    // perform the warp calculation
+    mapQuadToQuad(src, dest, warpMatrix);
     
-    //for the more accurate method we need to create
-    //a couple of matrixes that just act as containers
-    //to store our points  - the nice thing with this 
-    //method is you can give it more than four points!
-        
-    CvMat* src_mat = cvCreateMat(4, 1, CV_32FC2);
-    CvMat* dst_mat = cvCreateMat(4, 1, CV_32FC2);
+    // copy the values
+    matrixTemp.getPtr()[0] = warpMatrix[0][0];
+    matrixTemp.getPtr()[1] = warpMatrix[0][1];
+    matrixTemp.getPtr()[3] = warpMatrix[0][2];
     
-    //copy our points into the matrixes
-    cvSetData(src_mat, cvsrc, sizeof(CvPoint2D32f));
-    cvSetData(dst_mat, cvdst, sizeof(CvPoint2D32f));
+    matrixTemp.getPtr()[4] = warpMatrix[1][0];
+    matrixTemp.getPtr()[5] = warpMatrix[1][1];
+    matrixTemp.getPtr()[7] = warpMatrix[1][2];
     
-    //figure out the warping!
-    //warning - older versions of openCV had a bug
-    //in this function.
-    cvFindHomography(src_mat, dst_mat, translate);
-    
-    //get the matrix as a list of floats
-    float *mat = translate->data.fl;
-    
-    
-    //we need to copy these values
-    //from the 3x3 2D openCV matrix which is row ordered
-    //
-    // ie:   [0][1][2] x
-    //       [3][4][5] y
-    //       [6][7][8] w
-        
-    //to openGL's 4x4 3D column ordered matrix
-    //        x  y  z  w   
-    // ie:   [0][3][ ][6]
-    //       [1][4][ ][7]
-    //               [ ][ ][ ][ ]
-    //       [2][5][ ][9]
-    //       
-    
-    ofMatrix4x4 matrixTemp;
-    matrixTemp.getPtr()[0]  = mat[0];
-    matrixTemp.getPtr()[4]  = mat[1];
-    matrixTemp.getPtr()[12] = mat[2];
-        
-    matrixTemp.getPtr()[1]  = mat[3];
-    matrixTemp.getPtr()[5]  = mat[4];
-    matrixTemp.getPtr()[13] = mat[5];       
-        
-    matrixTemp.getPtr()[3]  = mat[6];
-    matrixTemp.getPtr()[7]  = mat[7];
-    matrixTemp.getPtr()[15] = mat[8];
-    
-    cvReleaseMat(&translate);
-    cvReleaseMat(&src_mat);
-    cvReleaseMat(&dst_mat);
+    matrixTemp.getPtr()[12] = warpMatrix[2][0];
+    matrixTemp.getPtr()[13] = warpMatrix[2][1];
+    matrixTemp.getPtr()[15] = warpMatrix[2][2];
 
     return matrixTemp;
-}
-
-void ofxQuadWarp::update() {
-    //
 }
 
 void ofxQuadWarp::reset() {
