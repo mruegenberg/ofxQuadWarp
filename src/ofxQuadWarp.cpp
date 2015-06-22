@@ -242,7 +242,7 @@ void ofxQuadWarp::keyPressed(ofKeyEventArgs& keyArgs) {
     }
 
     if(keyArgs.key == 'p') {
-        selectedCornerIndex++;
+        selectedCornerIndex = (selectedCornerIndex + 1) % 3;
     }
     
     if(selectedCornerIndex < 0 || selectedCornerIndex > 3) {
