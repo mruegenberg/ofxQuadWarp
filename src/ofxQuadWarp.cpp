@@ -97,13 +97,6 @@ void ofxQuadWarp::setSourceRect(const ofRectangle& r) {
     srcPoints[3].set(r.x, r.y + r.height);
 }
 
-void ofxQuadWarp::setSourcePoints(const vector<ofPoint>& points) {
-    int t = MIN(4, points.size());
-    for(int i=0; i<t; i++) {
-        srcPoints[i].set(points[i]);
-    }
-}
-
 void ofxQuadWarp::setTargetRect(const ofRectangle& r) {
     dstPoints[0].set(r.x, r.y);
     dstPoints[1].set(r.x + r.width, r.y);
@@ -247,22 +240,9 @@ void ofxQuadWarp::keyPressed(ofKeyEventArgs& keyArgs) {
     if(bShow == false) {
         return;
     }
-    
-    switch (keyArgs.key) {
-    case '1':
-        selectedCornerIndex = 0;
-        break;
-    case '2':
-        selectedCornerIndex = 1;
-        break;
-    case '3':
-        selectedCornerIndex = 2;
-        break;
-    case '4':
-        selectedCornerIndex = 3;
-        break;
-    default:
-        break;
+
+    if(keyArgs.key == 'p') {
+        selectedCornerIndex++;
     }
     
     if(selectedCornerIndex < 0 || selectedCornerIndex > 3) {
@@ -270,6 +250,7 @@ void ofxQuadWarp::keyPressed(ofKeyEventArgs& keyArgs) {
     }
     
     float nudgeAmount = 0.3;
+    if(bFast) nudgeAmount = 10;
     ofPoint & selectedPoint = dstPoints[selectedCornerIndex];
     
     switch (keyArgs.key) {
@@ -384,9 +365,7 @@ inline bool fileExists (const std::string& name) {
     }   
 }
 
-void ofxQuadWarp::load(const string& path) {
-    if(! fileExists(path)) return;
-    
+void ofxQuadWarp::load(const string& path) {    
     ofXml xml;
     bool bOk = xml.load(path);
     if(bOk == false) {

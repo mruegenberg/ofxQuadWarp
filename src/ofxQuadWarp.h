@@ -21,7 +21,6 @@ public:
     void setAnchorSize(float value);
     
     void setSourceRect(const ofRectangle& rect);
-    void setSourcePoints(const vector<ofPoint>& points);
     void setTargetRect(const ofRectangle& rect);
     void setTargetPoints(const vector<ofPoint>& points);
     
@@ -70,6 +69,8 @@ public:
     void onMouseReleased(ofMouseEventArgs & mouseArgs);
     void keyPressed(ofKeyEventArgs & keyArgs);
 
+    void setFastMovement(bool fast) { bFast = fast; }
+
 protected:
     
     ofPoint position;
@@ -82,4 +83,5 @@ protected:
     bool bMouseEnabled;
     bool bKeyboardShortcuts;
     bool bShow;
+    bool bFast;
 };
