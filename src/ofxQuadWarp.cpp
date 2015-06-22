@@ -41,14 +41,6 @@ void ofxQuadWarp::setAnchorSize(float value) {
 }
 
 //----------------------------------------------------- enable / disable.
-void ofxQuadWarp::enable() {    // DEPRECATED.
-    enableMouseControls();
-}
-
-void ofxQuadWarp::disable() {   // DEPRECATED.
-    disableMouseControls();
-}
-
 void ofxQuadWarp::enableMouseControls() {
     if(bMouseEnabled == true) {
         return;
@@ -112,10 +104,6 @@ void ofxQuadWarp::setSourcePoints(const vector<ofPoint>& points) {
     }
 }
 
-ofPoint* ofxQuadWarp::getSourcePoints() {
-    return &srcPoints[0];
-}
-
 void ofxQuadWarp::setTargetRect(const ofRectangle& r) {
     dstPoints[0].set(r.x, r.y);
     dstPoints[1].set(r.x + r.width, r.y);
@@ -128,10 +116,6 @@ void ofxQuadWarp::setTargetPoints(const vector<ofPoint>& points) {
     for(int i=0; i<t; i++) {
         dstPoints[i].set(points[i]);
     }
-}
-
-ofPoint* ofxQuadWarp::getTargetPoints() {
-    return &dstPoints[0];
 }
 
 //----------------------------------------------------- matrix.
@@ -152,23 +136,13 @@ ofMatrix4x4 ofxQuadWarp::getMatrix(const ofPoint* srcPoints, const ofPoint* dstP
     
     //we set the warp coordinates
     //source coordinates as the dimensions of our window
-    cvsrc[0].x = srcPoints[0].x;
-    cvsrc[0].y = srcPoints[0].y;
-    cvsrc[1].x = srcPoints[1].x;
-    cvsrc[1].y = srcPoints[1].y;
-    cvsrc[2].x = srcPoints[2].x;
-    cvsrc[2].y = srcPoints[2].y;
-    cvsrc[3].x = srcPoints[3].x;
-    cvsrc[3].y = srcPoints[3].y;
-    
-    cvdst[0].x = dstPoints[0].x;
-    cvdst[0].y = dstPoints[0].y;
-    cvdst[1].x = dstPoints[1].x;
-    cvdst[1].y = dstPoints[1].y;
-    cvdst[2].x = dstPoints[2].x;
-    cvdst[2].y = dstPoints[2].y;
-    cvdst[3].x = dstPoints[3].x;
-    cvdst[3].y = dstPoints[3].y;
+    for(int i=0; i<4; ++i) {
+        cvsrc[i].x = srcPoints[i].x;
+        cvsrc[i].y = srcPoints[i].y;
+        
+        cvdst[i].x = dstPoints[i].x;
+        cvdst[i].y = dstPoints[i].y;
+    }
     
     //we create a matrix that will store the results
     //from openCV - this is a 3x3 2D matrix that is
@@ -185,8 +159,8 @@ ofMatrix4x4 ofxQuadWarp::getMatrix(const ofPoint* srcPoints, const ofPoint* dstP
     //to store our points  - the nice thing with this 
     //method is you can give it more than four points!
         
-    CvMat* src_mat = cvCreateMat(4, 2, CV_32FC1);
-    CvMat* dst_mat = cvCreateMat(4, 2, CV_32FC1);
+    CvMat* src_mat = cvCreateMat(4, 1, CV_32FC2);
+    CvMat* dst_mat = cvCreateMat(4, 1, CV_32FC2);
     
     //copy our points into the matrixes
     cvSetData(src_mat, cvsrc, sizeof(CvPoint2D32f));
@@ -440,7 +414,19 @@ void ofxQuadWarp::save(const string& path) {
     xml.save(path);
 }
 
+
+inline bool fileExists (const std::string& name) {
+    if (FILE *file = fopen(name.c_str(), "r")) {
+        fclose(file);
+        return true;
+    } else {
+        return false;
+    }   
+}
+
 void ofxQuadWarp::load(const string& path) {
+    if(! fileExists(path)) return;
+    
     ofXml xml;
     bool bOk = xml.load(path);
     if(bOk == false) {

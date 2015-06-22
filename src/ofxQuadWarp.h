@@ -22,13 +22,8 @@ public:
     
     void setSourceRect(const ofRectangle& rect);
     void setSourcePoints(const vector<ofPoint>& points);
-    ofPoint* getSourcePoints();
     void setTargetRect(const ofRectangle& rect);
     void setTargetPoints(const vector<ofPoint>& points);
-    ofPoint* getTargetPoints();
-    
-    OF_DEPRECATED_MSG("Use enableMouseControls() and enableKeyboardShortcuts() instead.", void enable());
-    OF_DEPRECATED_MSG("Use disableMouseControls() and disableKeyboardShortcuts() instead.", void disable());
     
     void enableMouseControls();
     void disableMouseControls();
