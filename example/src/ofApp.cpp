@@ -9,10 +9,10 @@ void ofApp::setup() {
     
     img.loadImage("quad_warp_kittens.png");
 
-    int x = (ofGetWidth() - img.width) * 0.5;       // center on screen.
-    int y = (ofGetHeight() - img.height) * 0.5;     // center on screen.
-    int w = img.width;
-    int h = img.height;
+    int x = (ofGetWidth() - img.getWidth()) * 0.5;       // center on screen.
+    int y = (ofGetHeight() - img.getHeight()) * 0.5;     // center on screen.
+    int w = img.getWidth();
+    int h = img.getHeight();
     
     fbo.allocate(w, h);
     
@@ -35,8 +35,8 @@ void ofApp::update()
     
     for(int i=0; i<10; i++) {
         // randomise points over the image area.
-        points[i].x = ofRandom(img.width);
-        points[i].y = ofRandom(img.height);
+        points[i].x = ofRandom(img.getWidth());
+        points[i].y = ofRandom(img.getHeight());
     }
 }
 
