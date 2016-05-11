@@ -4,7 +4,7 @@
 //
 
 #include "ofxQuadWarp.h"
-#include "ofxOpenCv.h"
+#include "ofxHomography.h"
 
 ofxQuadWarp::ofxQuadWarp() {
     anchorSize = 10;
@@ -118,67 +118,7 @@ ofMatrix4x4 ofxQuadWarp::getMatrixInverse() const {
 }
 
 ofMatrix4x4 ofxQuadWarp::getMatrix(const ofPoint* srcPoints, const ofPoint* dstPoints) const {
-	//we need our points as opencv points
-	//be nice to do this without opencv?
-	CvPoint2D32f cvsrc[4];
-	CvPoint2D32f cvdst[4];
-	//we set the warp coordinates
-	//source coordinates as the dimensions of our window
-	for(int i=0; i<4; ++i) {
-	cvsrc[i].x = srcPoints[i].x;
-	cvsrc[i].y = srcPoints[i].y;
-	cvdst[i].x = dstPoints[i].x;
-	cvdst[i].y = dstPoints[i].y;
-	}
-	//we create a matrix that will store the results
-	//from openCV - this is a 3x3 2D matrix that is
-	//row ordered
-	CvMat * translate = cvCreateMat(3,3,CV_32FC1);
-	//this is the slightly easier - but supposidly less
-	//accurate warping method
-	//cvWarpPerspectiveQMatrix(cvsrc, cvdst, translate);
-	//for the more accurate method we need to create
-	//a couple of matrixes that just act as containers
-	//to store our points - the nice thing with this
-	//method is you can give it more than four points!
-	CvMat* src_mat = cvCreateMat(4, 1, CV_32FC2);
-	CvMat* dst_mat = cvCreateMat(4, 1, CV_32FC2);
-	//copy our points into the matrixes
-	cvSetData(src_mat, cvsrc, sizeof(CvPoint2D32f));
-	cvSetData(dst_mat, cvdst, sizeof(CvPoint2D32f));
-	//figure out the warping!
-	//warning - older versions of openCV had a bug
-	//in this function.
-	cvFindHomography(src_mat, dst_mat, translate);
-	//get the matrix as a list of floats
-	float *mat = translate->data.fl;
-	//we need to copy these values
-	//from the 3x3 2D openCV matrix which is row ordered
-	//
-	// ie: [0][1][2] x
-	// [3][4][5] y
-	// [6][7][8] w
-	//to openGL's 4x4 3D column ordered matrix
-	// x y z w
-	// ie: [0][3][ ][6]
-	// [1][4][ ][7]
-	// [ ][ ][ ][ ]
-	// [2][5][ ][9]
-	//
-	ofMatrix4x4 matrixTemp;
-	matrixTemp.getPtr()[0] = mat[0];
-	matrixTemp.getPtr()[4] = mat[1];
-	matrixTemp.getPtr()[12] = mat[2];
-	matrixTemp.getPtr()[1] = mat[3];
-	matrixTemp.getPtr()[5] = mat[4];
-	matrixTemp.getPtr()[13] = mat[5];
-	matrixTemp.getPtr()[3] = mat[6];
-	matrixTemp.getPtr()[7] = mat[7];
-	matrixTemp.getPtr()[15] = mat[8];
-	cvReleaseMat(&translate);
-	cvReleaseMat(&src_mat);
-	cvReleaseMat(&dst_mat);
-	return matrixTemp;
+    return ofxHomography::findHomography(srcPoints, dstPoints);
 }
 
 void ofxQuadWarp::reset() {
