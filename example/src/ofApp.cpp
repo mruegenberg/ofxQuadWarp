@@ -17,10 +17,7 @@ void ofApp::setup() {
     fbo.allocate(w, h);
     
     warper.setSourceRect(ofRectangle(0, 0, w, h));              // this is the source rectangle which is the size of the image and located at ( 0, 0 )
-    warper.setTopLeftCornerPosition(ofPoint(x, y));             // this is position of the quad warp corners, centering the image on the screen.
-    warper.setTopRightCornerPosition(ofPoint(x + w, y));        // this is position of the quad warp corners, centering the image on the screen.
-    warper.setBottomLeftCornerPosition(ofPoint(x, y + h));      // this is position of the quad warp corners, centering the image on the screen.
-    warper.setBottomRightCornerPosition(ofPoint(x + w, y + h)); // this is position of the quad warp corners, centering the image on the screen.
+    warper.setTargetRect(ofRectangle(x,y,w,h));
     warper.setup();
     warper.load(); // reload last saved changes.
 }
@@ -94,8 +91,8 @@ void ofApp::draw() {
     ofSetColor(ofColor::white);
     ofDrawBitmapString("to warp the image, drag the corners of the image.", 20, 30);
     ofDrawBitmapString("press 's' to toggle quad warp UI. this will also disable quad warp interaction.", 20, 50);
-    ofDrawBitmapString("press & hold 1, 2, 3, 4 to snap that point to the mouse", 20, 70);
-    ofDrawBitmapString("when a corner is selected (red), use keyboard arrow keys to nudge the corner position.", 20, 90);
+    ofDrawBitmapString("press 'o' and 'p' to select points", 20, 70);
+    ofDrawBitmapString("when a corner is selected (red), use keyboard arrow keys to nudge the corner position (shift + arrow for faster movement).", 20, 90);
 }
 
 void ofApp::exit() {

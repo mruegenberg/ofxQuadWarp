@@ -17,7 +17,6 @@ public:
     
     void setup();
     
-    void setPosition(float x, float y);
     void setAnchorSize(float value);
     
     void setSourceRect(const ofRectangle& rect);
@@ -37,14 +36,6 @@ public:
     ofMatrix4x4 getMatrixInverse() const;
     ofMatrix4x4 getMatrix(const ofPoint * srcPoints, const ofPoint * dstPoints) const;
     
-    void setCorners(const vector<ofPoint>& corners);
-    void setCorner(const ofPoint& p, int cornerIndex);
-    void setTopLeftCornerPosition(const ofPoint& p);
-    void setTopRightCornerPosition(const ofPoint& p);
-    void setBottomRightCornerPosition(const ofPoint& p);
-    void setBottomLeftCornerPosition(const ofPoint& p);
-    bool isCornerSelected(int cornerIndex) { return selectedCornerIndex == cornerIndex; }
-
     void show();
     void hide();
     void toggleShow();
@@ -59,7 +50,8 @@ public:
     void drawHighlightedCorner();
     void drawSelectedCorner();
     void drawCornerAt(const ofPoint& point);
-    
+
+    // FIXME: disallow explicit access to this
     ofPoint srcPoints[4];
     ofPoint dstPoints[4];
 
@@ -68,20 +60,16 @@ public:
     void onMouseDragged(ofMouseEventArgs & mouseArgs);
     void onMouseReleased(ofMouseEventArgs & mouseArgs);
     void keyPressed(ofKeyEventArgs & keyArgs);
+    void keyReleased(ofKeyEventArgs & keyArgs);
 
-    void setFastMovement(bool fast) { bFast = fast; }
-
-protected:
-    
-    ofPoint position;
-    
+protected:    
     float anchorSize;
-    float anchorSizeHalf;
     int selectedCornerIndex;
     int highlightCornerIndex;
     
     bool bMouseEnabled;
     bool bKeyboardShortcuts;
     bool bShow;
-    bool bFast;
+
+    bool bShiftPressed;
 };

@@ -2,6 +2,10 @@
 #include "ofApp.h"
 
 int main( ){
-	ofSetupOpenGL(900, 768, OF_WINDOW);
-	ofRunApp( new ofApp());
+    ofGLWindowSettings settings;
+    // settings.setGLVersion(2,1); // last version where fixed pipeline was default
+    settings.setGLVersion(3,2); // use programmable renderer
+    ofCreateWindow(settings);
+    
+    ofRunApp(new ofApp());
 }
