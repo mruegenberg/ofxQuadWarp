@@ -28,6 +28,8 @@ public:
     
     void enableKeyboardShortcuts();
     void disableKeyboardShortcuts();
+
+    bool hitTest(ofVec2f pos); // checks whether `pos` is within the warped quad
     
     void update();
     void reset();
@@ -51,10 +53,6 @@ public:
     void drawSelectedCorner();
     void drawCornerAt(const ofPoint& point);
 
-    // FIXME: disallow explicit access to this
-    ofPoint srcPoints[4];
-    ofPoint dstPoints[4];
-
     void onMouseMoved(ofMouseEventArgs & mouseArgs);
     void onMousePressed(ofMouseEventArgs & mouseArgs);
     void onMouseDragged(ofMouseEventArgs & mouseArgs);
@@ -62,7 +60,10 @@ public:
     void keyPressed(ofKeyEventArgs & keyArgs);
     void keyReleased(ofKeyEventArgs & keyArgs);
 
-protected:    
+protected:
+    ofPoint srcPoints[4];
+    ofPoint dstPoints[4];
+    
     float anchorSize;
     int selectedCornerIndex;
     int highlightCornerIndex;

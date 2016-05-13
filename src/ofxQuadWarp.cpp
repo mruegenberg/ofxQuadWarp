@@ -86,6 +86,21 @@ void ofxQuadWarp::disableKeyboardShortcuts() {
     }
 }
 
+
+bool ofxQuadWarp::hitTest(ofVec2f pos) {
+    // apply the inverse transformation to our hit point and then
+    // compare to the input rectangle
+    
+    ofMatrix4x4 mat = getMatrix().getInverse();
+    ofVec4f posTransformed = mat.preMult(ofVec3f(pos.x, pos.y, 0.0));
+    float a2 = anchorSize * 0.5;
+    if(posTransformed.x > srcPoints[0].x - a2 && posTransformed.y > srcPoints[0].y - a2 &&
+       posTransformed.x < srcPoints[2].x + a2 && posTransformed.y < srcPoints[2].y + a2) {
+        return true;
+    }
+    return false;
+}       
+
 //----------------------------------------------------- source / target points.
 void ofxQuadWarp::setSourceRect(const ofRectangle& r) {
     srcPoints[0].set(r.x, r.y);
@@ -336,11 +351,20 @@ void ofxQuadWarp::load(const string& path) {
 //----------------------------------------------------- show / hide.
 void ofxQuadWarp::draw() {
     if(bShow == false) return;
-    
+
+    ofSetColor(ofColor::cyan);
     drawQuadOutline();
+    
+    ofSetColor(ofColor::yellow);
     drawCorners();
+    
+    ofSetColor(ofColor::magenta);
     drawHighlightedCorner();
+    
+    ofSetColor(ofColor::red);
     drawSelectedCorner();
+
+    ofSetColor(ofColor::white);
 }
 
 void ofxQuadWarp::drawQuadOutline() {
