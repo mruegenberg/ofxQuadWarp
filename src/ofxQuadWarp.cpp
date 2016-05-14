@@ -216,7 +216,7 @@ void ofxQuadWarp::keyPressed(ofKeyEventArgs& keyArgs) {
     
     if(selectedCornerIndex < 0) return; // no corner selected. only happens if we didn't select one using 'o'/'p' before
     
-    float nudgeAmount = 0.3;
+    float nudgeAmount = 0.25;
     if(bShiftPressed) nudgeAmount = 10;
     ofPoint & selectedPoint = dstPoints[selectedCornerIndex];
     
