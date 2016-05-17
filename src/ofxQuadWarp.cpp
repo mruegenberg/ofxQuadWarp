@@ -86,7 +86,6 @@ void ofxQuadWarp::disableKeyboardShortcuts() {
     }
 }
 
-
 bool ofxQuadWarp::hitTest(ofVec2f pos) {
     // apply the inverse transformation to our hit point and then
     // compare to the input rectangle
@@ -99,7 +98,15 @@ bool ofxQuadWarp::hitTest(ofVec2f pos) {
         return true;
     }
     return false;
-}       
+}
+
+ofRectangle ofxQuadWarp::boundingBox() {
+    ofRectangle res(dstPoints[0].x, dstPoints[0].y, 1, 1);
+    res.growToInclude(dstPoints[1]);
+    res.growToInclude(dstPoints[2]);
+    res.growToInclude(dstPoints[3]);
+    return res;
+}
 
 //----------------------------------------------------- source / target points.
 void ofxQuadWarp::setSourceRect(const ofRectangle& r) {

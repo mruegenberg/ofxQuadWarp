@@ -30,6 +30,7 @@ public:
     void disableKeyboardShortcuts();
 
     bool hitTest(ofVec2f pos); // checks whether `pos` is within the warped quad
+    ofRectangle boundingBox(); // calculates and returns a bounding box
     
     void update();
     void reset();
