@@ -22,6 +22,7 @@ public:
     void setSourceRect(const ofRectangle& rect);
     void setTargetRect(const ofRectangle& rect);
     void setTargetPoints(const vector<ofPoint>& points);
+    vector<ofPoint> getTargetPoints();
     
     void enableMouseControls();
     void disableMouseControls();

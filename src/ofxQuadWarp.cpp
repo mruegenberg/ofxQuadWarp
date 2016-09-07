@@ -130,6 +130,11 @@ void ofxQuadWarp::setTargetPoints(const vector<ofPoint>& points) {
     }
 }
 
+vector<ofPoint> ofxQuadWarp::getTargetPoints() {
+    vector<ofPoint> points(dstPoints, dstPoints + sizeof dstPoints / sizeof dstPoints[0]);
+    return points;
+}
+
 //----------------------------------------------------- matrix.
 ofMatrix4x4 ofxQuadWarp::getMatrix() const {
     return getMatrix(&srcPoints[0], &dstPoints[0]);
